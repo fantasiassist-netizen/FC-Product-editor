@@ -4,6 +4,8 @@ const ctx = canvas.getContext("2d");
 let layers = [];
 let selectedLayer = null;
 
+let rotateProduct = 0;
+
 let history = [];
 let redoStack = [];
 
@@ -32,16 +34,23 @@ select.onchange = ()=> loadProduct(select.value);
 
 function loadProduct(i){
   const img = new Image();
-  img.crossOrigin="anonymous";
+  img.crossOrigin = "anonymous";
 
   img.onload = ()=>{
     productImage = img;
+
+    // detect orientation
+    if (img.width > img.height) {
+      rotateProduct = 90; // landscape fix
+    } else {
+      rotateProduct = 0;
+    }
+
     draw();
   };
 
   img.src = products[i].src;
 }
-loadProduct(0);
 
 // PRODUCT COLOR
 document.getElementById("productColor").oninput = e=>{
@@ -114,7 +123,17 @@ function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
   // draw base image
+  ctx.save();
+
+if (rotateProduct !== 0) {
+  ctx.translate(canvas.width / 2, canvas.height / 2);
+  ctx.rotate(rotateProduct * Math.PI / 180);
+  ctx.drawImage(productImage, -canvas.height/2, -canvas.width/2, canvas.height, canvas.width);
+} else {
   ctx.drawImage(productImage,0,0,canvas.width,canvas.height);
+}
+
+ctx.restore();
 
   // apply color overlay
   ctx.globalCompositeOperation = "multiply";
