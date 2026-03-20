@@ -4,9 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Product Customizer</title>
+<title>Customizer</title>
 
-<!-- FONTS -->
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Graduate&family=Bebas+Neue&family=Oswald&family=Rubik+Mono+One&display=swap" rel="stylesheet">
 
 <style>
@@ -51,7 +50,7 @@ button, input, select {
 
 <div class="controls">
 
-<h2>Customizer</h2>
+<h2>Customize</h2>
 
 <div class="section">
 <label>Product</label>
@@ -60,7 +59,7 @@ button, input, select {
 <label>Product Color</label>
 <input type="color" id="productColor">
 
-<label>Rotate Product (Fix Orientation)</label>
+<label>Rotate Product</label>
 <select id="productRotation">
   <option value="0">0°</option>
   <option value="90">90°</option>
@@ -81,7 +80,7 @@ button, input, select {
 </div>
 
 <div class="section">
-<h3>Edit Layer</h3>
+<h3>Edit Text</h3>
 
 <label>Text</label>
 <input id="textInput">
@@ -100,16 +99,22 @@ button, input, select {
 <input type="color" id="textColor">
 
 <label>Text Size</label>
-<input type="range" id="size" min="10" max="500">
+<input type="range" id="size" min="10" max="150">
 
-<label>Rotation</label>
+<label>Text Rotation</label>
 <input type="range" id="rotation" min="0" max="360">
 
 <label>Outline Color</label>
 <input type="color" id="outlineColor">
 
 <label>Outline Width</label>
-<input type="range" id="outlineWidth" min="0" max="100">
+<input type="range" id="outlineWidth" min="0" max="10">
+
+<label>Text Thickness</label>
+<input type="range" id="thickness" min="1" max="10">
+
+<label>Text Width (Stretch)</label>
+<input type="range" id="scaleX" min="0.5" max="2" step="0.1">
 </div>
 
 <div class="section">
