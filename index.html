@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pro Customizer</title>
+<title>Customizer</title>
 
 <style>
 body { margin:0; font-family:Arial; background:#f3f3f3; }
@@ -25,21 +25,23 @@ canvas {
   border-radius:10px;
 }
 
-.layer-item {
-  padding:6px;
-  background:#eee;
-  margin-bottom:5px;
-  cursor:pointer;
+.section {
+  margin-top:20px;
 }
 
-.layer-item.active {
-  background:black;
-  color:white;
+label {
+  display:block;
+  margin-top:10px;
+  font-weight:bold;
+}
+
+small {
+  color:#666;
 }
 
 button, input, select {
   width:100%;
-  margin-top:6px;
+  margin-top:5px;
   padding:6px;
 }
 </style>
@@ -55,26 +57,53 @@ button, input, select {
 
 <div class="controls">
 
-  <h3>Product</h3>
-  <select id="productSelect"></select>
+  <h2>Customize Product</h2>
 
-  <h3>Add</h3>
-  <button onclick="addText()">+ Text</button>
-  <button onclick="addLogo()">+ Logo</button>
-  <button onclick="deleteLayer()">Delete</button>
+  <div class="section">
+    <h3>1. Choose Product</h3>
+    <label>Product Type</label>
+    <select id="productSelect"></select>
 
-  <h3>Layers</h3>
-  <div id="layers"></div>
+    <label>Product Color</label>
+    <input type="color" id="productColor">
+    <small>Only works best on light/blank images</small>
+  </div>
 
-  <h3>Edit</h3>
-  <input id="textInput" placeholder="Text">
-  <input type="color" id="textColor">
-  <input type="range" id="size" min="10" max="150">
-  <input type="range" id="rotation" min="0" max="360">
+  <div class="section">
+    <h3>2. Add Elements</h3>
+    <button onclick="addText()">Add Text</button>
+    <button onclick="addLogo()">Upload Logo/Image</button>
+    <button onclick="deleteLayer()">Delete Selected Layer</button>
+  </div>
 
-  <h3>History</h3>
-  <button onclick="undo()">Undo</button>
-  <button onclick="redo()">Redo</button>
+  <div class="section">
+    <h3>3. Layers</h3>
+    <div id="layers"></div>
+  </div>
+
+  <div class="section">
+    <h3>4. Edit Selected Layer</h3>
+
+    <label>Text Content</label>
+    <input id="textInput">
+
+    <label>Text Color</label>
+    <input type="color" id="textColor">
+
+    <label>Text Size</label>
+    <input type="range" id="size" min="10" max="150">
+    <small id="sizeValue"></small>
+
+    <label>Rotation</label>
+    <input type="range" id="rotation" min="0" max="360">
+    <small id="rotationValue"></small>
+  </div>
+
+  <div class="section">
+    <h3>5. History</h3>
+    <button onclick="undo()">Undo</button>
+    <button onclick="redo()">Redo</button>
+  </div>
 
   <input type="file" id="upload">
 
