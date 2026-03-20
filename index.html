@@ -3,17 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Customizer</title>
+<title>Pro Customizer</title>
 
 <style>
 body { margin:0; font-family:Arial; background:#f3f3f3; }
 
-.container {
-  display:flex;
-  flex-wrap:wrap;
-  gap:20px;
-  padding:20px;
-}
+.container { display:flex; flex-wrap:wrap; gap:20px; padding:20px; }
 
 .preview, .controls {
   background:white;
@@ -26,11 +21,9 @@ body { margin:0; font-family:Arial; background:#f3f3f3; }
 canvas {
   width:100%;
   max-width:500px;
-  border-radius:10px;
   background:#eee;
+  border-radius:10px;
 }
-
-h3 { margin-bottom:5px; }
 
 .layer-item {
   padding:6px;
@@ -44,16 +37,9 @@ h3 { margin-bottom:5px; }
   color:white;
 }
 
-button {
+button, input, select {
   width:100%;
-  padding:8px;
-  margin-top:8px;
-  cursor:pointer;
-}
-
-input, select {
-  width:100%;
-  margin-top:5px;
+  margin-top:6px;
   padding:6px;
 }
 </style>
@@ -69,45 +55,22 @@ input, select {
 
 <div class="controls">
 
-  <h2>Customize Product</h2>
-
-  <h3>Select Product</h3>
+  <h3>Product</h3>
   <select id="productSelect"></select>
 
-  <h3>Add Elements</h3>
-  <button onclick="addText()">+ Add Text</button>
-  <button onclick="addLogo()">+ Add Logo</button>
-  <button onclick="deleteLayer()">🗑 Delete Selected</button>
+  <h3>Add</h3>
+  <button onclick="addText()">+ Text</button>
+  <button onclick="addLogo()">+ Logo</button>
+  <button onclick="deleteLayer()">Delete</button>
 
   <h3>Layers</h3>
   <div id="layers"></div>
 
-  <h3>Edit Selected</h3>
-
-  <label>Text</label>
-  <input id="textInput">
-
-  <label>Font</label>
-  <select id="fontSelect">
-    <option>Arial</option>
-    <option>Impact</option>
-    <option>Courier New</option>
-  </select>
-
-  <label>Text Color</label>
+  <h3>Edit</h3>
+  <input id="textInput" placeholder="Text">
   <input type="color" id="textColor">
-
-  <label>Size</label>
   <input type="range" id="size" min="10" max="150">
-
-  <label>Rotation</label>
   <input type="range" id="rotation" min="0" max="360">
-
-  <label>Outline Color</label>
-  <input type="color" id="outlineColor">
-
-  <label>Outline Width</label>
-  <input type="range" id="outlineWidth" min="0" max="10">
 
   <h3>History</h3>
   <button onclick="undo()">Undo</button>
@@ -115,7 +78,7 @@ input, select {
 
   <input type="file" id="upload">
 
-  <button onclick="download()">Download Design</button>
+  <button onclick="sendToCart()">Add to Cart</button>
 
 </div>
 
