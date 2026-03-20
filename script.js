@@ -209,19 +209,64 @@ document.getElementById("outlineWidth").oninput = e=>{
 };
 
 // DRAG
-let dragging = false;
+let offsetX, offsetY;
 
-canvas.onmousedown = ()=> dragging=true;
-canvas.onmouseup = ()=> dragging=false;
+canvas.addEventListener("mousedown", (e) => {
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
 
-canvas.onmousemove = e=>{
-  if(dragging && selectedLayer){
-    const rect = canvas.getBoundingClientRect();
-    selectedLayer.x = e.clientX - rect.left;
-    selectedLayer.y = e.clientY - rect.top;
-    draw();
+  // detect clicked layer (top first)
+  for (let i = layers.length - 1; i >= 0; i--) {
+    const l = layers[i];
+
+    if (l.type === "text") {
+      if (
+        x > l.x - 50 &&
+        x < l.x + 50 &&
+        y > l.y - 50 &&
+        y < l.y + 50
+      ) {
+        selectedLayer = l;
+        offsetX = x - l.x;
+        offsetY = y - l.y;
+        dragging = true;
+        updateUI();
+        return;
+      }
+    }
+
+    if (l.type === "image") {
+      if (
+        x > l.x - l.w / 2 &&
+        x < l.x + l.w / 2 &&
+        y > l.y - l.h / 2 &&
+        y < l.y + l.h / 2
+      ) {
+        selectedLayer = l;
+        offsetX = x - l.x;
+        offsetY = y - l.y;
+        dragging = true;
+        updateUI();
+        return;
+      }
+    }
   }
-};
+});
+
+canvas.addEventListener("mousemove", (e) => {
+  if (!dragging || !selectedLayer) return;
+
+  const rect = canvas.getBoundingClientRect();
+  selectedLayer.x = e.clientX - rect.left - offsetX;
+  selectedLayer.y = e.clientY - rect.top - offsetY;
+
+  draw();
+});
+
+canvas.addEventListener("mouseup", () => {
+  dragging = false;
+});
 
 // DOWNLOAD
 function download(){
