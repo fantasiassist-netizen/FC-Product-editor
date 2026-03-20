@@ -141,15 +141,39 @@ function draw(){
 
   ctx.save();
 
-  if(productRotation !== 0){
-    ctx.translate(canvas.width/2, canvas.height/2);
-    ctx.rotate(productRotation*Math.PI/180);
-    ctx.drawImage(productImage,-canvas.height/2,-canvas.width/2,canvas.height,canvas.width);
-  } else {
-    ctx.drawImage(productImage,0,0,canvas.width,canvas.height);
-  }
+// center canvas
+ctx.translate(canvas.width / 2, canvas.height / 2);
 
-  ctx.restore();
+// rotate
+ctx.rotate(productRotation * Math.PI / 180);
+
+// determine image dimensions based on rotation
+let imgW = productImage.width;
+let imgH = productImage.height;
+
+if (Math.abs(productRotation) === 90) {
+  [imgW, imgH] = [imgH, imgW];
+}
+
+// scale to fit canvas WITHOUT cropping
+const scale = Math.min(
+  canvas.width / imgW,
+  canvas.height / imgH
+);
+
+const drawW = productImage.width * scale;
+const drawH = productImage.height * scale;
+
+// draw centered
+ctx.drawImage(
+  productImage,
+  -drawW / 2,
+  -drawH / 2,
+  drawW,
+  drawH
+);
+
+ctx.restore();
 
   // COLOR OVERLAY
   ctx.globalCompositeOperation = "multiply";
