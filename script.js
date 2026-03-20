@@ -34,7 +34,15 @@ products.forEach((p, i) => {
 productSelect.onchange = () => loadProduct(productSelect.value);
 
 function loadProduct(index) {
-  productImage.src = products[index].src;
+  const img = new Image();
+  img.crossOrigin = "anonymous";
+
+  img.onload = function () {
+    productImage = img;
+    draw();
+  };
+
+  img.src = products[index].src;
 }
 
 productImage.onload = draw;
