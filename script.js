@@ -60,7 +60,7 @@ function saveState(){
   redoStack = [];
 }
 
-// UNDO REDO
+// UNDO / REDO
 function undo(){
   if(history.length){
     redoStack.push(JSON.stringify(layers));
@@ -84,12 +84,14 @@ function addText(){
     type:"text",
     text:"Text",
     x:250,y:300,
-    size:200,
+    size:40,
     rotation:0,
     color:"#000",
     outline:"#000",
     outlineWidth:2,
-    font:"Anton"
+    font:"Anton",
+    thickness:1,
+    scaleX:1
   };
   layers.push(layer);
   selectedLayer=layer;
@@ -140,40 +142,24 @@ function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
 
   ctx.save();
+  ctx.translate(canvas.width/2, canvas.height/2);
+  ctx.rotate(productRotation*Math.PI/180);
 
-// center canvas
-ctx.translate(canvas.width / 2, canvas.height / 2);
+  let imgW = productImage.width;
+  let imgH = productImage.height;
 
-// rotate
-ctx.rotate(productRotation * Math.PI / 180);
+  if (Math.abs(productRotation) === 90) {
+    [imgW, imgH] = [imgH, imgW];
+  }
 
-// determine image dimensions based on rotation
-let imgW = productImage.width;
-let imgH = productImage.height;
+  const scale = Math.min(canvas.width / imgW, canvas.height / imgH);
 
-if (Math.abs(productRotation) === 90) {
-  [imgW, imgH] = [imgH, imgW];
-}
+  const drawW = productImage.width * scale;
+  const drawH = productImage.height * scale;
 
-// scale to fit canvas WITHOUT cropping
-const scale = Math.min(
-  canvas.width / imgW,
-  canvas.height / imgH
-);
+  ctx.drawImage(productImage, -drawW/2, -drawH/2, drawW, drawH);
 
-const drawW = productImage.width * scale;
-const drawH = productImage.height * scale;
-
-// draw centered
-ctx.drawImage(
-  productImage,
-  -drawW / 2,
-  -drawH / 2,
-  drawW,
-  drawH
-);
-
-ctx.restore();
+  ctx.restore();
 
   // COLOR OVERLAY
   ctx.globalCompositeOperation = "multiply";
@@ -188,6 +174,8 @@ ctx.restore();
     ctx.rotate(layer.rotation*Math.PI/180);
 
     if(layer.type==="text"){
+      ctx.scale(layer.scaleX || 1, 1);
+
       ctx.font = layer.size+"px '"+layer.font+"'";
 
       ctx.lineWidth = layer.outlineWidth;
@@ -195,13 +183,17 @@ ctx.restore();
       ctx.strokeText(layer.text,0,0);
 
       ctx.fillStyle = layer.color;
+
+      for(let i=0;i<layer.thickness;i++){
+        ctx.fillText(layer.text,i*0.5,0);
+      }
+
       ctx.fillText(layer.text,0,0);
     }
 
     if(layer.type==="image"){
       ctx.drawImage(layer.img,-layer.w/2,-layer.h/2,layer.w,layer.h);
 
-      // resize handle
       if(layer===selectedLayer){
         ctx.fillStyle="blue";
         ctx.fillRect(layer.w/2-5,layer.h/2-5,10,10);
@@ -274,6 +266,20 @@ document.getElementById("outlineColor").oninput=e=>{
 document.getElementById("outlineWidth").oninput=e=>{
   if(selectedLayer?.type==="text"){
     selectedLayer.outlineWidth=e.target.value;
+    draw();
+  }
+};
+
+document.getElementById("thickness").oninput=e=>{
+  if(selectedLayer?.type==="text"){
+    selectedLayer.thickness=parseInt(e.target.value);
+    draw();
+  }
+};
+
+document.getElementById("scaleX").oninput=e=>{
+  if(selectedLayer?.type==="text"){
+    selectedLayer.scaleX=parseFloat(e.target.value);
     draw();
   }
 };
