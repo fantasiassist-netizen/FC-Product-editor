@@ -7,6 +7,9 @@ let selectedLayer = null;
 let history = [];
 let redoStack = [];
 
+let productColor = "#ffffff";
+
+// PRODUCTS
 const products = [
   {
     name: "Shoelace Tag",
@@ -30,32 +33,26 @@ select.onchange = ()=> loadProduct(select.value);
 function loadProduct(i){
   const img = new Image();
   img.crossOrigin="anonymous";
-  img.onload = ()=>{ productImage = img; draw(); };
+
+  img.onload = ()=>{
+    productImage = img;
+    draw();
+  };
+
   img.src = products[i].src;
 }
 loadProduct(0);
+
+// PRODUCT COLOR
+document.getElementById("productColor").oninput = e=>{
+  productColor = e.target.value;
+  draw();
+};
 
 // SAVE STATE
 function saveState(){
   history.push(JSON.stringify(layers));
   redoStack = [];
-}
-
-// UNDO / REDO
-function undo(){
-  if(history.length){
-    redoStack.push(JSON.stringify(layers));
-    layers = JSON.parse(history.pop());
-    draw();
-  }
-}
-
-function redo(){
-  if(redoStack.length){
-    history.push(JSON.stringify(layers));
-    layers = JSON.parse(redoStack.pop());
-    draw();
-  }
 }
 
 // ADD TEXT
@@ -115,10 +112,19 @@ function deleteLayer(){
 // DRAW
 function draw(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // draw base image
   ctx.drawImage(productImage,0,0,canvas.width,canvas.height);
+
+  // apply color overlay
+  ctx.globalCompositeOperation = "multiply";
+  ctx.fillStyle = productColor;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.globalCompositeOperation = "source-over";
 
   layers.forEach(layer=>{
     ctx.save();
+
     ctx.translate(layer.x,layer.y);
     ctx.rotate(layer.rotation*Math.PI/180);
 
@@ -132,38 +138,14 @@ function draw(){
       ctx.drawImage(layer.img,-layer.w/2,-layer.h/2,layer.w,layer.h);
     }
 
-    // BOUNDING BOX
+    // bounding box
     if(layer===selectedLayer){
       ctx.strokeStyle="blue";
       ctx.strokeRect(-60,-60,120,120);
-
-      // resize handle
-      ctx.fillStyle="blue";
-      ctx.fillRect(50,50,10,10);
-
-      // rotate handle
-      ctx.fillStyle="red";
-      ctx.fillRect(0,-80,10,10);
     }
 
     ctx.restore();
   });
-}
-
-// UI
-function updateUI(){
-  const list=document.getElementById("layers");
-  list.innerHTML="";
-
-  layers.forEach((l,i)=>{
-    let div=document.createElement("div");
-    div.className="layer-item "+(l===selectedLayer?"active":"");
-    div.innerText=l.type+" "+(i+1);
-    div.onclick=()=>{selectedLayer=l; updateUI();}
-    list.appendChild(div);
-  });
-
-  draw();
 }
 
 // CONTROLS
@@ -184,6 +166,7 @@ document.getElementById("textColor").oninput=e=>{
 document.getElementById("size").oninput=e=>{
   if(selectedLayer?.type==="text"){
     selectedLayer.size=e.target.value;
+    document.getElementById("sizeValue").innerText = e.target.value;
     draw();
   }
 };
@@ -191,69 +174,34 @@ document.getElementById("size").oninput=e=>{
 document.getElementById("rotation").oninput=e=>{
   if(selectedLayer){
     selectedLayer.rotation=e.target.value;
+    document.getElementById("rotationValue").innerText = e.target.value+"°";
     draw();
   }
 };
 
-// DRAG / RESIZE / ROTATE
-let mode=null;
+// DRAG
+let dragging=false;
 
-canvas.onmousedown=e=>{
-  const rect=canvas.getBoundingClientRect();
-  const x=e.clientX-rect.left;
-  const y=e.clientY-rect.top;
-
-  if(!selectedLayer) return;
-
-  // resize zone
-  if(x>selectedLayer.x+50 && y>selectedLayer.y+50){
-    mode="resize";
-    return;
-  }
-
-  // rotate zone
-  if(y<selectedLayer.y-60){
-    mode="rotate";
-    return;
-  }
-
-  mode="drag";
-};
+canvas.onmousedown=()=>dragging=true;
+canvas.onmouseup=()=>dragging=false;
 
 canvas.onmousemove=e=>{
-  if(!mode || !selectedLayer) return;
-
-  const rect=canvas.getBoundingClientRect();
-  const x=e.clientX-rect.left;
-  const y=e.clientY-rect.top;
-
-  if(mode==="drag"){
-    selectedLayer.x=x;
-    selectedLayer.y=y;
+  if(dragging && selectedLayer){
+    const rect=canvas.getBoundingClientRect();
+    selectedLayer.x=e.clientX-rect.left;
+    selectedLayer.y=e.clientY-rect.top;
+    draw();
   }
-
-  if(mode==="resize" && selectedLayer.type==="image"){
-    selectedLayer.w+=2;
-    selectedLayer.h+=2;
-  }
-
-  if(mode==="rotate"){
-    selectedLayer.rotation+=2;
-  }
-
-  draw();
 };
 
-canvas.onmouseup=()=> mode=null;
-
-// SEND TO WIX
+// SEND
 function sendToCart(){
   const image = canvas.toDataURL("image/png");
 
   window.parent.postMessage({
     type:"CUSTOM_PRODUCT",
-    design: layers,
-    preview: image
+    preview:image,
+    layers:layers
   },"*");
 
   alert("Design sent!");
