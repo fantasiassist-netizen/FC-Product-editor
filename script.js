@@ -6,7 +6,7 @@ let selectedLayer = null;
 
 // PRODUCT IMAGE
 let productImage = new Image();
-productImage.src = "shirt.png"; // or replace with URL
+productImage.src = "https://fantasiassist-netizen.github.io/FC-Product-editor/Shoelace-FlexTag-Blank.png"; // or replace with URL
 
 // ADD TEXT
 function addText() {
