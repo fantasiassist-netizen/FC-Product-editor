@@ -84,7 +84,7 @@ function addText(){
     type:"text",
     text:"Text",
     x:250,y:300,
-    size:40,
+    size:200,
     rotation:0,
     color:"#000",
     outline:"#000",
