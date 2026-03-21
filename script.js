@@ -315,6 +315,9 @@ function sendToWix() {
   window.parent.postMessage(payload, "*");
 }
 
+const addToCartBtn = document.getElementById("addToCartBtn");
+
+addToCartBtn.onclick = sendToWix;
 
 // SENDtocart
 function sendToCart(){
