@@ -315,7 +315,6 @@ function sendToWix() {
   window.parent.postMessage(payload, "*");
 }
 
-addToCartBtn.onclick = sendToWix;
 
 // SENDtocart
 function sendToCart(){
