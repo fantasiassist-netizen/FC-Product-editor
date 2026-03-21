@@ -306,13 +306,16 @@ function sendToWix() {
 
   const payload = {
     type: "CUSTOM_PRODUCT",
-    preview: preview,
-    layers: layers
+    preview,
+    layers
   };
 
   console.log("SENDING TO WIX:", payload);
 
-  window.parent.postMessage(payload, "*");
+  setTimeout(() => {
+    window.parent.postMessage(payload, "*");
+  }, 100);
+}
 }
 
 const addToCartBtn = document.getElementById("addToCartBtn");
