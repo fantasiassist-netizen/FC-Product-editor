@@ -1,136 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Customizer</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Graduate&family=Bebas+Neue&family=Oswald&family=Rubik+Mono+One&display=swap" rel="stylesheet">
-
-<style>
-body { margin:0; font-family:Arial; background:#f3f3f3; }
-
-.container { display:flex; flex-wrap:wrap; gap:20px; padding:20px; }
-
-.preview, .controls {
-  background:white;
-  border-radius:12px;
-  padding:20px;
-  flex:1;
-  min-width:320px;
-}
-
-canvas {
-  width:100%;
-  max-width:500px;
-  background:#eee;
-  border-radius:10px;
-}
-
-.section { margin-top:20px; }
-
-label { display:block; margin-top:10px; font-weight:bold; }
-
-button, input, select {
-  width:100%;
-  margin-top:5px;
-  padding:6px;
-}
-</style>
+  <meta charset="UTF-8" />
+  <title>Custom Builder</title>
+  <style>
+    body { margin: 0; font-family: Arial; }
+    #canvas {
+      border: 1px solid #ccc;
+    }
+    #toolbar {
+      padding: 10px;
+      background: #f5f5f5;
+    }
+    button {
+      margin-right: 8px;
+      padding: 6px 10px;
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="container">
-
-<div class="preview">
-  <canvas id="canvas" width="500" height="600"></canvas>
+<div id="toolbar">
+  <button id="addText">Add Text</button>
+  <button id="addToCartBtn">Add To Cart</button>
 </div>
 
-<div class="controls">
+<canvas id="canvas" width="800" height="600"></canvas>
 
-<h2>Customize</h2>
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
 
-<div class="section">
-<label>Product</label>
-<select id="productSelect"></select>
+let layers = [];
 
-<label>Product Color</label>
-<input type="color" id="productColor">
+// --- ADD TEXT ---
+document.getElementById("addText").onclick = () => {
+  layers.push({
+    type: "text",
+    text: "Edit Me",
+    x: 100,
+    y: 100
+  });
+  render();
+};
 
-<label>Rotate Product</label>
-<select id="productRotation">
-  <option value="0">0°</option>
-  <option value="90">90°</option>
-  <option value="-90">-90°</option>
-  <option value="180">180°</option>
-</select>
-</div>
+// --- SIMPLE RENDER ---
+function render() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-<div class="section">
-<button onclick="addText()">Add Text</button>
-<button onclick="addLogo()">Upload Logo</button>
-<button onclick="deleteLayer()">Delete Selected</button>
-</div>
+  layers.forEach(layer => {
+    if (layer.type === "text") {
+      ctx.font = "30px Arial";
+      ctx.fillText(layer.text, layer.x, layer.y);
+    }
+  });
+}
 
-<div class="section">
-<label>Layers</label>
-<div id="layers"></div>
-</div>
+// --- SEND TO WIX ---
+function sendToWix() {
+  const preview = canvas.toDataURL("image/png");
 
-<div class="section">
-<h3>Edit Text</h3>
+  const payload = {
+    type: "CUSTOM_PRODUCT",
+    preview: preview,
+    layers: layers
+  };
 
-<label>Text</label>
-<input id="textInput">
+  console.log("SENDING TO WIX:", payload);
 
-<label>Font</label>
-<select id="fontSelect">
-<option value="Anton">Anton</option>
-<option value="Graduate">Graduate</option>
-<option value="Bebas Neue">Bebas Neue</option>
-<option value="Oswald">Oswald</option>
-<option value="Rubik Mono One">Rubik Mono</option>
-<option value="Arial">Arial</option>
-</select>
+  window.parent.postMessage(payload, "*");
+}
 
-<label>Text Color</label>
-<input type="color" id="textColor">
+// --- BUTTON ---
+document.getElementById("addToCartBtn").onclick = sendToWix;
 
-<label>Text Size</label>
-<input type="range" id="size" min="10" max="400">
-
-<label>Text Rotation</label>
-<input type="range" id="rotation" min="0" max="360">
-
-<label>Outline Color</label>
-<input type="color" id="outlineColor">
-
-<label>Outline Width</label>
-<input type="range" id="outlineWidth" min="0" max="40">
-
-<label>Text Thickness</label>
-<input type="range" id="thickness" min="1" max="30">
-
-<label>Text Width (Stretch)</label>
-<input type="range" id="scaleX" min="-1.5" max="2" step="0.1">
-</div>
-
-<div class="section">
-<button onclick="undo()">Undo</button>
-<button onclick="redo()">Redo</button>
-</div>
-
-<input type="file" id="upload">
-
-<button id="addToCartBtn">Add to Cart</button>
-
-</div>
-
-</div>
-
-<script src="script.js"></script>
+render();
+</script>
 
 </body>
 </html>
