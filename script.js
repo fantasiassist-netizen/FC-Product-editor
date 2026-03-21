@@ -322,10 +322,10 @@ function sendToCart(){
   const image = canvas.toDataURL("image/png");
 
   window.parent.postMessage({
-    type:"CUSTOM_PRODUCT",
-    preview:image,
-    layers:layers
-  },"*");
+    type: "CUSTOM_PRODUCT",
+    preview: canvas.toDataURL("image/png"),
+    layers: layers
+  }, "*");
 
   alert("Design sent!");
 }
