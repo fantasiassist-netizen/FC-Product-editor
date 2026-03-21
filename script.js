@@ -299,7 +299,25 @@ canvas.onmousemove=e=>{
   }
 };
 
-// SEND
+//SENDtowix
+function sendToWix() {
+
+  const preview = canvas.toDataURL("image/png");
+
+  const payload = {
+    type: "CUSTOM_PRODUCT",
+    preview: preview,
+    layers: layers
+  };
+
+  console.log("SENDING TO WIX:", payload);
+
+  window.parent.postMessage(payload, "*");
+}
+
+addToCartBtn.onclick = sendToWix;
+
+// SENDtocart
 function sendToCart(){
   const image = canvas.toDataURL("image/png");
 
